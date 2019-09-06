@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.dao.ProductMapper">
+    <resultMap id="productMapper" type="Product">
+         <id property="id" column="id"></id>
+        <result property="categoryId" column="category_id"></result>
+        <result property="name" column="name"></result>
+        <result property="subtitle" column="subtitle"></result>
+        <result property="mainImage" column="main_image"></result>
+        <result property="subImages" column="sub_images"></result>
+        <result property="detail" column="detail"></result>
+        <result property="price" column="price"></result>
+        <result property="stock" column="stock"></result>
+        <result property="status" column="status"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="updateTime" column="update_time"></result>
+    </resultMap>
+
+
+    <select id="searchLike" resultMap="productMapper">
+       select * from product
+       <where>
+           <if test="productId!=null">
+               and id=#{productId}
+           </if>
+           <if test="productName!=null">
+               and name like #{productName}
+           </if>
+       </where>
+    </select>
+    <select id="findByNameAndCategoryIds" resultMap="productMapper">
+        select * from product where status=1
+        <if test="productName!=null">
+        and name like #{productName}
+        </if>
+        <if test="categoryIds!=null">
+        and  category_id in
+            <foreach collection="categoryIds" item="item" index="index" open="(" separator="," close=")">
+                 #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>

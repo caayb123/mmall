@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+<!--    开启spring的注解扫描-->
+    <context:component-scan base-package="com.mmall">
+<!--        controller的注解不由Spring管理由SpringMVC管理-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+<!--   整合mybatis-->
+<!--    配置连接池-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--        配置连接数据库的信息-->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://39.96.59.137:3306/mmall"></property>
+        <property name="user" value="cyb"></property>
+        <property name="password" value="root"></property>
+
+        <property name="initialPoolSize" value="10"></property>
+        <property name="maxIdleTime" value="30"></property>
+        <property name="maxPoolSize" value="100"></property>
+        <property name="minPoolSize" value="10"></property>
+        <property name="maxStatements" value="200"></property>
+    </bean>
+<!--    配置SqlSessionFactroy工厂-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+<!--        注入连接池-->
+        <property name="dataSource" ref="dataSource"></property>
+<!--        配置domain别名-->
+        <property name="typeAliasesPackage" value="com.mmall.pojo"></property>
+<!--        配置sql映射文件路径-->
+        <property name="mapperLocations" value="classpath:mappers/*.xml">
+        </property>
+
+
+<!--        <property name="plugins">-->
+<!--            <array>-->
+
+<!--                &lt;!&ndash;        配置mybatis分页插件&ndash;&gt;-->
+<!--                <bean class="com.github.pagehelper.PageInterceptor">-->
+<!--                    <property name="properties">-->
+<!--                        <props>-->
+<!--                            <prop key="helperDialect">mysql</prop>-->
+<!--                            <prop key="reasonable">true</prop>-->
+<!--                        </props>-->
+<!--                    </property>-->
+<!--                </bean>-->
+
+<!--            </array>-->
+<!--        </property>-->
+     </bean>
+<!--    配置需要代理的Dao接口所在的包也是通用Mapper配置点-->
+    <bean id="mapperScannerConfigurer" class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.mmall.dao"></property>
+    </bean>
+
+<!--    配置redis-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="300" />
+        <property name="maxWaitMillis" value="3000" />
+        <property name="testOnBorrow" value="true" />
+    </bean>
+    <!-- 从外部配置文件获取redis相关信息 -->
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="localhost" />
+        <property name="port" value="6379" />
+        <property name="database" value="1" />
+        <property name="poolConfig" ref="poolConfig"/>
+    </bean>
+    <!-- redis模板配置 -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory"></property>
+        <!-- 对于中文的存储 需要进行序列化操作存储  -->
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer">
+            </bean>
+        </property>
+    </bean>
+
+    <!--    配置spring的声明式事务管理-->
+    <!--    配置事务管理器-->
+    <bean id="traansactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" ></property>
+    </bean>
+    <!--    开启spring对事务注解的支持-->
+    <tx:annotation-driven transaction-manager="traansactionManager"></tx:annotation-driven>
+
+
+</beans>

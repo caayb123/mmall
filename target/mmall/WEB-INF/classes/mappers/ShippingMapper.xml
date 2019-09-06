@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.dao.ShippingMapper">
+    <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="Shipping">
+        insert into shipping values(null ,#{userId},#{receiverName},#{receiverPhone},#{receiverMobile},#{receiverProvince},#{receiverCity},#{receiverDistrict},#{receiverAddress},#{receiverZip},now(),now())
+    </insert>
+    <update id="update" parameterType="Shipping">
+        update shipping set user_id=#{userId},receiver_name=#{receiverName},receiver_phone=#{receiverPhone},receiver_mobile=#{receiverMobile},receiver_province=#{receiverProvince},receiver_city=#{receiverCity},receiver_district=#{receiverDistrict},receiver_address=#{receiverAddress},receiver_zip=#{receiverZip},update_time=now() where user_id=#{userId} and id=#{id}
+    </update>
+</mapper>
