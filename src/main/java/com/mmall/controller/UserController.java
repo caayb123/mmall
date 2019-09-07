@@ -1,7 +1,8 @@
 package com.mmall.controller;
 
+import com.mmall.annotation.ManagerAnnotation;
 import com.mmall.common.Const;
-import com.mmall.common.ResponseCode;
+import com.mmall.common.ManagerCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.UserService;
@@ -23,7 +24,7 @@ public class UserController {
 
     @RequestMapping(value = "/login.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(String username, String password, HttpSession session){
+    public ServerResponse<User>  login(String username, String password, HttpSession session){
         if (StringUtils.isBlank(username)||StringUtils.isBlank(password)){
             return ServerResponse.createByErrorMessage("非法登录");
         }
@@ -57,11 +58,9 @@ public class UserController {
     }
     @RequestMapping(value = "/get_user_info.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<User> getUserInfo(HttpSession session){
         User user =(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage("用户未登录无法获取当前用户信息");
-        }
         user.setPassword(null);
         user.setAnswer(null);
         return ServerResponse.createBySuccess(user);
@@ -92,11 +91,9 @@ public class UserController {
     }
     @RequestMapping(value = "/reset_password.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<String> restPassword(HttpSession session,String passwordOld,String passwordNew){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage("用户未登录");
-        }
         if (StringUtils.isBlank(passwordNew)||StringUtils.isBlank(passwordOld)){
             return ServerResponse.createByErrorMessage("参数有误");
         }
@@ -104,11 +101,9 @@ public class UserController {
     }
     @RequestMapping(value = "/update_information.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<String> updateInformation(HttpSession session,User user){
         User curretUser =(User) session.getAttribute(Const.CURRENT_USER);
-        if (curretUser==null){
-            return ServerResponse.createByErrorMessage("用户未登录");
-        }
         //能修改的信息进行封装,防止横向越权
         curretUser.setAnswer(user.getAnswer());
         curretUser.setQuestion(user.getQuestion());
@@ -122,11 +117,9 @@ public class UserController {
     }
     @RequestMapping(value = "/get_information.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<User> loginAndGetInformation(HttpSession session){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,无法获取当前用户信息,status=10,强制登录");
-        }
         user.setPassword(null);
         user.setAnswer(null);
         return ServerResponse.createBySuccess(user);

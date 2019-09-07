@@ -4,7 +4,9 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
 import com.github.pagehelper.PageInfo;
+import com.mmall.annotation.ManagerAnnotation;
 import com.mmall.common.Const;
+import com.mmall.common.ManagerCode;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
@@ -32,57 +34,45 @@ public class OrderController {
     private OrderService orderService;
     @RequestMapping(value = "/create.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse createOrder(HttpSession session,Integer shippingId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
         return orderService.createOrder(user.getId(),shippingId);
     }
     @RequestMapping(value = "/cancel.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse cancelOrder(HttpSession session,Long orderNo) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
         return orderService.cancelOrder(user.getId(),orderNo);
     }
     @RequestMapping(value = "/get_order_cart_product.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse getOrderCartProduct(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
         return orderService.getOrderCartProduct(user.getId());
     }
     @RequestMapping(value = "/detail.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse detail(HttpSession session,Long orderNo) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
         return orderService.detail(user.getId(),orderNo);
     }
     @RequestMapping(value = "/list.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(defaultValue = "1")Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
         return orderService.getOrderList(user.getId(),pageNum,pageSize);
     }
 
     @RequestMapping(value = "/pay.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
         String path = request.getServletContext().getRealPath("code");
         return orderService.pay(user.getId(),orderNo,path);
     }
@@ -121,11 +111,9 @@ public class OrderController {
     }
     @RequestMapping(value = "/query_order_pay_status.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse queryPayStatus(HttpSession session, Long orderNo){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
         return orderService.queryStatus(user.getId(), orderNo);
     }
 }

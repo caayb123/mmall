@@ -1,6 +1,7 @@
 package com.mmall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.mmall.annotation.ManagerAnnotation;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.RoleCode;
@@ -24,39 +25,20 @@ public class OrderManagerController {
      private OrderService orderService;
     @RequestMapping(value = "/list.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<PageInfo> list(HttpSession session, @RequestParam(defaultValue = "1")Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
-
        return orderService.findAll(pageNum, pageSize);
     }
     @RequestMapping(value = "/search.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<OrderVo> search(HttpSession session, Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
        return orderService.searchByOrderNo(orderNo);
     }
     @RequestMapping(value = "/send_good.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse sendGoods(HttpSession session, Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         return orderService.updateSendStatus(orderNo);
     }
 }

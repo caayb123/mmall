@@ -1,6 +1,7 @@
 package com.mmall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.mmall.annotation.ManagerAnnotation;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.RoleCode;
@@ -34,27 +35,14 @@ public class ProductManagerController {
 
     @RequestMapping(value = "/list.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<PageInfo> productList(@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize, HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
-
         return productService.findAll(pageNum, pageSize);
     }
     @RequestMapping(value = "/save.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<String> saveOrUpdateProduct(HttpSession session,Product product){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         if (product==null){
             return ServerResponse.createByErrorMessage("添加产品的参数有误");
         }
@@ -62,14 +50,8 @@ public class ProductManagerController {
     }
     @RequestMapping(value = "/set_sale_status.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<String> setSaleStatus(HttpSession session,Integer productId,Integer status){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         if (productId==null||status==null){
             return ServerResponse.createByErrorMessage("上下架产品参数有误");
         }
@@ -77,14 +59,8 @@ public class ProductManagerController {
     }
     @RequestMapping(value = "/detail.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<ProductDetailVo> detail(HttpSession session, Integer productId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         if (productId==null){
             return ServerResponse.createByErrorMessage("获取商品参数有误");
         }
@@ -92,26 +68,14 @@ public class ProductManagerController {
     }
     @RequestMapping(value = "/search.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<PageInfo> search(@RequestParam(defaultValue = "1") Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize, HttpSession session,Integer productId,String productName){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         return productService.search(pageNum, pageSize, productName, productId);
     }
     @RequestMapping(value = "/upload.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse upload(MultipartFile multipartFile,HttpSession session) throws Exception{
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!= RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         String imageUrl = OssUtil.getImageUrl(multipartFile.getInputStream());
         if (imageUrl!=null) {
             return ServerResponse.createBySuccess(imageUrl);

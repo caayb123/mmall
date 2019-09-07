@@ -1,5 +1,6 @@
 package com.mmall.controller;
 
+import com.mmall.annotation.ManagerAnnotation;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.RoleCode;
@@ -28,15 +29,8 @@ public class CategoryManagerController {
 
     @RequestMapping(value = "/add_category.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation
    public ServerResponse<String> addCategory(HttpSession session,String categoryName, @RequestParam(defaultValue = "0") Integer parentId){
-       User user = (User) session.getAttribute(Const.CURRENT_USER);
-       if (user==null){
-           return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-       }
-
-       if (user.getRole()!=RoleCode.ROLE_ADMIN.getCode()){
-           return ServerResponse.createByErrorMessage("无权限操作");
-       }
 
        if (StringUtils.isBlank(categoryName)||parentId==null){
            return ServerResponse.createByErrorMessage("参数错误");
@@ -45,14 +39,8 @@ public class CategoryManagerController {
    }
     @RequestMapping(value = "/set_category_name.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<String> updateCategoryName(HttpSession session,Integer categoryId,String categoryName){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!=RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         if (StringUtils.isBlank(categoryName)||categoryId==null){
             return ServerResponse.createByErrorMessage("更新类别参数错误");
         }
@@ -60,27 +48,15 @@ public class CategoryManagerController {
     }
     @RequestMapping(value = "/get_category.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<List<Category>> getChilrParallelCategory(HttpSession session, @RequestParam(defaultValue = "0") Integer categoryId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!=RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
        //获取传来参数的同级子节点
         return categoryService.getChildParallelCategory(categoryId);
     }
     @RequestMapping(value = "/get_deep_category.do",method = RequestMethod.GET)
     @ResponseBody
+    @ManagerAnnotation
     public ServerResponse<Set<Integer>> getChilrdDeepCategory(HttpSession session, @RequestParam(defaultValue = "0") Integer categoryId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,请登录");
-        }
-        if (user.getRole()!=RoleCode.ROLE_ADMIN.getCode()){
-            return ServerResponse.createByErrorMessage("无权限操作");
-        }
         //获取传来参数的所有子节点id
        return categoryService.getChildDeepCategory(categoryId);
     }

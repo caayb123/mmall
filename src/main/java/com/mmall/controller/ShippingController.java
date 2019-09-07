@@ -1,7 +1,9 @@
 package com.mmall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.mmall.annotation.ManagerAnnotation;
 import com.mmall.common.Const;
+import com.mmall.common.ManagerCode;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Shipping;
@@ -25,47 +27,37 @@ public class ShippingController {
 
     @RequestMapping(value = "add.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<Map<String,Object>> add(HttpSession session, Shipping shipping){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
         return shippingService.add(user.getId(),shipping);
     }
     @RequestMapping(value = "del.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<String> delete(HttpSession session, Integer shippingId){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
      return shippingService.delete(user.getId(),shippingId);
     }
     @RequestMapping(value = "update.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<String> update(HttpSession session,Shipping shipping){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
        return shippingService.update(user.getId(),shipping);
     }
     @RequestMapping(value = "select.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<Shipping> detail(HttpSession session,Integer shippingId){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
        return shippingService.selectOne(user.getId(),shippingId);
     }
     @RequestMapping(value = "list.do",method = RequestMethod.POST)
     @ResponseBody
+    @ManagerAnnotation(value = ManagerCode.NOAUTHORITY)
     public ServerResponse<PageInfo<Shipping>> list(HttpSession session, @RequestParam(defaultValue = "1")Integer pageNum, @RequestParam(defaultValue = "10") Integer pageSize){
         User user=(User) session.getAttribute(Const.CURRENT_USER);
-        if (user==null){
-            return ServerResponse.createByErrorMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
         return shippingService.selectAll(user.getId(),pageNum,pageSize);
     }
 
